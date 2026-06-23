@@ -1,19 +1,77 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useRef, useEffect, useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Share2 } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Share2, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, Video } from "@/data/videos";
+import { videos } from "@/data/videos";
+import { useSubscription } from "@/context/SubscriptionContext";
+import {
+  checkSubscriptionStatus,
+  redirectToCampaign,
+  isActive,
+} from "@/services/vasApi";
+import { getMsisdn, parseUrlParams, getSubid, getProductCode } from "@/lib/subscriber";
 
 export default function VideoPlayer() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+  const [searchParams] = useSearchParams();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { requestPlay } = useSubscription();
+  const [verifying, setVerifying] = useState(true);
+  const [allowed, setAllowed] = useState(false);
 
   const video = videos.find((v) => v.id === id);
+  const subid = getSubid();
+  const productcode = getProductCode();
+
+  const relatedVideos = videos
+    .filter((v) => v.category === video?.category && v.id !== video?.id)
+    .slice(0, 6);
+
+  useEffect(() => {
+    parseUrlParams(searchParams.toString() ? `?${searchParams.toString()}` : "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!video) return;
+
+    let cancelled = false;
+
+    const verify = async () => {
+      const msisdn = getMsisdn();
+      if (!msisdn) {
+        requestPlay(video);
+        navigate("/", { replace: true });
+        return;
+      }
+
+      setVerifying(true);
+      try {
+        const data = await checkSubscriptionStatus(subid, productcode, msisdn);
+        if (cancelled) return;
+        if (isActive(data.status)) {
+          setAllowed(true);
+          setVerifying(false);
+        } else {
+          redirectToCampaign(subid, productcode);
+        }
+      } catch {
+        if (!cancelled) redirectToCampaign(subid, productcode);
+      }
+    };
+
+    verify();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, video, subid, productcode, requestPlay, navigate]);
+
+  useEffect(() => {
+    if (allowed) videoRef.current?.play();
+  }, [id, allowed]);
 
   if (!video) {
     return (
@@ -35,9 +93,16 @@ export default function VideoPlayer() {
     );
   }
 
-  const relatedVideos = videos
-    .filter((v) => v.category === video.category && v.id !== video.id)
-    .slice(0, 6);
+  if (verifying || !allowed) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-foreground/60">
+          <Loader2 className="h-10 w-10 animate-spin text-gold-500" />
+          <p className="font-semibold">Vérification de l'abonnement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -67,10 +132,12 @@ export default function VideoPlayer() {
             className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl mb-8"
           >
             <video
+              ref={videoRef}
               src={video.videoUrl}
               poster={video.thumbnail}
               controls
               controlsList="nodownload"
+              autoPlay
               className="w-full h-full"
             />
 
@@ -129,14 +196,13 @@ export default function VideoPlayer() {
             <motion.div className="h-1 w-24 bg-gradient-to-r from-gold-500 to-gold-400 rounded mb-8" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedVideos.map((v) => (
-                <VideoCard key={v.id} video={v} variant="stories" onPlay={setActiveVideo} />
+                <VideoCard key={v.id} video={v} variant="stories" />
               ))}
             </div>
           </div>
         </motion.section>
       )}
 
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
       <Footer />
     </div>
   );

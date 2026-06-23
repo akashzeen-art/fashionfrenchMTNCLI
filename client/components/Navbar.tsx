@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useSubscription } from "@/context/SubscriptionContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { accountQuery } = useSubscription();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,9 +18,10 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Accueil", href: "/" },
-    { label: "Collection", href: "/collections" },
-    { label: "Tendances", href: "/trending" },
+    { label: "Accueil", href: `/${accountQuery}` },
+    { label: "Collection", href: `/collections${accountQuery}` },
+    { label: "Tendances", href: `/trending${accountQuery}` },
+    { label: "Mon Compte", href: `/account${accountQuery}` },
   ];
 
   return (

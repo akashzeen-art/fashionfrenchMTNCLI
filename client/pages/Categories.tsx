@@ -1,14 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, categories, Video } from "@/data/videos";
+import { videos, categories } from "@/data/videos";
 import { motion } from "framer-motion";
-import { useState } from "react";
 
 export default function Categories() {
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
-
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
@@ -48,19 +44,13 @@ export default function Categories() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {catVideos.map((video) => (
-                  <VideoCard
-                    key={video.id}
-                    video={video}
-                    variant="paris"
-                    onPlay={setActiveVideo}
-                  />
+                  <VideoCard key={video.id} video={video} variant="paris" />
                 ))}
               </div>
             </motion.section>
           );
         })}
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
       <Footer />
     </div>
   );

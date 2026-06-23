@@ -1,8 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, Video } from "@/data/videos";
+import { videos } from "@/data/videos";
 
 export default function TrendingSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -16,7 +15,6 @@ export default function TrendingSection() {
     }
   }, []);
 
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const trendingVideos = videos.slice(0, 6);
 
   return (
@@ -68,7 +66,7 @@ export default function TrendingSection() {
               viewport={{ once: true }}
               className="flex-shrink-0 w-80"
             >
-              <VideoCard video={video} variant="trending" onPlay={setActiveVideo} />
+              <VideoCard video={video} variant="trending" />
             </motion.div>
           ))}
         </motion.div>
@@ -88,7 +86,6 @@ export default function TrendingSection() {
           </motion.p>
         )}
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
     </section>
   );
 }

@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, Video } from "@/data/videos";
+import { videos } from "@/data/videos";
 
 export default function ParisStreetSection() {
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const parisVideos = videos.slice(6, 15);
 
   const masonryLayout = [
@@ -22,7 +19,6 @@ export default function ParisStreetSection() {
 
   return (
     <section className="relative py-20 bg-gradient-cream">
-      {/* Decorative Elements */}
       <motion.div
         className="absolute top-0 left-0 w-96 h-96 bg-orange-200/20 rounded-full filter blur-3xl"
         animate={{ y: [0, 30, 0] }}
@@ -35,7 +31,6 @@ export default function ParisStreetSection() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +53,6 @@ export default function ParisStreetSection() {
           </p>
         </motion.div>
 
-        {/* Masonry Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 auto-rows-max">
           {parisVideos.map((video, index) => (
             <motion.div
@@ -69,12 +63,11 @@ export default function ParisStreetSection() {
               transition={{ duration: 0.6, delay: index * 0.08 }}
               viewport={{ once: true }}
             >
-              <VideoCard video={video} variant="paris" onPlay={setActiveVideo} />
+              <VideoCard video={video} variant="paris" />
             </motion.div>
           ))}
         </div>
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
     </section>
   );
 }

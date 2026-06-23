@@ -1,16 +1,12 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, Video } from "@/data/videos";
+import { videos } from "@/data/videos";
 import { motion } from "framer-motion";
-import { useState } from "react";
 
-// Simulate trending by taking every 3rd video starting from index 0
 const trendingVideos = videos.filter((_, i) => i % 3 === 0 || i % 5 === 0);
 
 export default function Trending() {
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
@@ -31,7 +27,6 @@ export default function Trending() {
           Les vidéos les plus populaires du moment
         </motion.p>
 
-        {/* Featured top 3 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {trendingVideos.slice(0, 3).map((video, i) => (
             <motion.div
@@ -44,7 +39,7 @@ export default function Trending() {
               <span className="absolute top-3 left-3 z-10 w-8 h-8 bg-gold-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                 {i + 1}
               </span>
-              <VideoCard video={video} variant="runway" onPlay={setActiveVideo} />
+              <VideoCard video={video} variant="runway" />
             </motion.div>
           ))}
         </div>
@@ -57,12 +52,11 @@ export default function Trending() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
             >
-              <VideoCard video={video} variant="trending" onPlay={setActiveVideo} />
+              <VideoCard video={video} variant="trending" />
             </motion.div>
           ))}
         </div>
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
       <Footer />
     </div>
   );

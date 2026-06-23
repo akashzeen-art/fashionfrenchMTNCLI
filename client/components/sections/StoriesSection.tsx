@@ -1,19 +1,16 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, Video } from "@/data/videos";
+import { videos } from "@/data/videos";
+import { useSubscription } from "@/context/SubscriptionContext";
 
 export default function StoriesSection() {
   const storiesVideos = videos.slice(25, 32);
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+  const { requestPlay } = useSubscription();
 
   return (
     <section className="relative py-20 overflow-hidden">
-      {/* Soft Gradient Background */}
       <div className="absolute inset-0 gradient-soft" />
 
-      {/* Floating Glassmorphic Elements */}
       <motion.div
         className="absolute top-20 left-1/4 w-64 h-64 glass rounded-full opacity-30"
         animate={{ y: [0, 30, 0], x: [0, 20, 0] }}
@@ -26,7 +23,6 @@ export default function StoriesSection() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,14 +44,12 @@ export default function StoriesSection() {
           </p>
         </motion.div>
 
-        {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {storiesVideos.map((video) => (
             <div key={video.id} className="group">
               <motion.div whileHover={{ y: -10 }} transition={{ duration: 0.3 }}>
-                <VideoCard video={video} variant="stories" onPlay={setActiveVideo} />
+                <VideoCard video={video} variant="stories" />
 
-                {/* Magazine-style Info Below Card */}
                 <div className="mt-4 p-4 glass rounded-lg backdrop-blur-md">
                   <h3 className="font-serif text-lg text-foreground mb-2">
                     {video.designer}
@@ -66,7 +60,7 @@ export default function StoriesSection() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setActiveVideo(video)}
+                    onClick={() => requestPlay(video)}
                     className="mt-3 px-4 py-2 bg-gold-500/20 text-gold-700 hover:bg-gold-500/30 rounded-lg text-sm font-semibold transition-all"
                   >
                     Regarder
@@ -77,7 +71,6 @@ export default function StoriesSection() {
           ))}
         </div>
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
     </section>
   );
 }

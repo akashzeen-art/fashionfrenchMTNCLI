@@ -1,18 +1,18 @@
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import { Video } from "@/data/videos";
+import { useSubscription } from "@/context/SubscriptionContext";
 
 interface VideoCardProps {
   video: Video;
   variant?: "trending" | "paris" | "runway" | "stories";
-  onPlay: (video: Video) => void;
 }
 
 export default function VideoCard({
   video,
   variant = "stories",
-  onPlay,
 }: VideoCardProps) {
+  const { requestPlay } = useSubscription();
   const variants = {
     trending: "group relative overflow-hidden rounded-lg h-64 cursor-pointer",
     paris: "group relative overflow-hidden rounded-2xl h-72 shadow-lg cursor-pointer",
@@ -32,7 +32,7 @@ export default function VideoCard({
       className={variants[variant]}
       whileHover={{ scale: 1.03 }}
       transition={{ duration: 0.3 }}
-      onClick={() => onPlay(video)}
+      onClick={() => requestPlay(video)}
     >
       {/* Background Image */}
       <img

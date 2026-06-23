@@ -1,14 +1,12 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoCard from "@/components/VideoCard";
-import VideoModal from "@/components/VideoModal";
-import { videos, categories, Video } from "@/data/videos";
+import { videos, categories } from "@/data/videos";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function Collections() {
   const [selected, setSelected] = useState<string>("Tout");
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
 
   const filtered =
     selected === "Tout" ? videos : videos.filter((v) => v.category === selected);
@@ -33,7 +31,6 @@ export default function Collections() {
           Explorez toutes nos collections de mode
         </motion.p>
 
-        {/* Filter */}
         <div className="flex flex-wrap gap-2 mb-10">
           {["Tout", ...categories].map((cat) => (
             <button
@@ -58,12 +55,11 @@ export default function Collections() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
             >
-              <VideoCard video={video} variant="stories" onPlay={setActiveVideo} />
+              <VideoCard video={video} variant="stories" />
             </motion.div>
           ))}
         </div>
       </div>
-      <VideoModal video={activeVideo} onClose={() => setActiveVideo(null)} />
       <Footer />
     </div>
   );
