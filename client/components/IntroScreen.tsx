@@ -68,7 +68,7 @@ export default function IntroScreen({ onComplete }: IntroScreenProps) {
             animate={{ letterSpacing: "0.05em", opacity: 1 }}
             transition={{ duration: 1.2 }}
           >
-            TELE MODE
+            TÉLÉ MODE
           </motion.h1>
 
           <motion.div
