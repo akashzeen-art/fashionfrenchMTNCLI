@@ -11,7 +11,6 @@ import {
 } from "@/services/vasApi";
 import {
   getSubid,
-  getProductCode,
   parseUrlParams,
   formatMsisdnDisplay,
 } from "@/lib/subscriber";
@@ -41,7 +40,7 @@ export default function MyAccount() {
         validFrom: data.valid_from || data.validityfrom || "—",
         validTo: data.valid_to || data.validityto || "—",
         status: String(data.status),
-        serviceName: data.service_name || "CINÉMA Mode",
+        serviceName: data.service_name || "Télé Mode",
       });
     } catch {
       setError("Impossible de charger les détails du compte.");
@@ -88,7 +87,7 @@ export default function MyAccount() {
             Mon Compte
           </h1>
           <p className="text-foreground/60">
-            Gérez votre abonnement CINÉMA Mode
+            Gérez votre abonnement Télé Mode
           </p>
         </motion.div>
 
@@ -189,9 +188,6 @@ export default function MyAccount() {
           </motion.div>
         ) : null}
 
-        <p className="text-xs text-gray-400 text-center mt-6">
-          Produit : {getProductCode()}
-        </p>
       </div>
 
       <Footer />

@@ -67,29 +67,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     if (urlMsisdn) setMsisdnState(normalizeMsisdn(urlMsisdn));
   }, [location.search]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const urlSubid = params.get("subid");
-    if (!urlSubid) return;
-
-    const currentProductcode = getProductCode();
-    const storedMsisdn = getMsisdn();
-    let cancelled = false;
-
-    checkSubscriptionStatus(urlSubid, currentProductcode, storedMsisdn || undefined)
-      .then((result) => {
-        if (cancelled) return;
-        if (!isActive(result.status)) {
-          redirectToCampaign(urlSubid, currentProductcode);
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-  }, [location.search]);
-
   const accountQuery = useMemo(() => {
     const q = new URLSearchParams();
     q.set("subid", subid || "0");

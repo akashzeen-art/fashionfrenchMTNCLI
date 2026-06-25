@@ -38,9 +38,13 @@ export default function Navbar() {
           <Link to="/" className="flex-shrink-0">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-2xl font-bold bg-gradient-to-r from-black to-gold-600 bg-clip-text text-transparent"
+              className="flex items-center"
             >
-              CINÉMA
+              <img
+                src="/fashionlogo.png"
+                alt="Fashion logo"
+                className="h-10 w-auto object-contain"
+              />
             </motion.div>
           </Link>
 
